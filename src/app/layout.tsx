@@ -4,6 +4,7 @@ import "./globals.css";
 import Sidenav from "@/components/Sidenav";
 import Topnav from "@/components/Topnav";
 import Providers from "@/lib/providers";
+import { AuthProvider } from "@/context/AuthContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,15 +31,17 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex bg-gray-50 text-gray-900`}
       >
-        <section className="w-60 h-screen bg-gray-200">
-          <Sidenav />
-        </section>
-        <section className="w-full">
-          <Topnav />
-          <main>
-            <Providers>{children}</Providers>
-          </main>
-        </section>
+        <AuthProvider>
+          <section className="w-60 h-screen bg-gray-200">
+            <Sidenav />
+          </section>
+          <section className="w-full">
+            <Topnav />
+            <main>
+              <Providers>{children}</Providers>
+            </main>
+          </section>
+        </AuthProvider>
       </body>
     </html>
   );

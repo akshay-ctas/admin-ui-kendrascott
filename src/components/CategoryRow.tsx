@@ -1,0 +1,117 @@
+"use client";
+
+import { useState } from "react";
+import { ChevronRight, ChevronDown, Pencil, Trash2 } from "lucide-react";
+import { Category } from "@/types";
+import CategoryEditDrawer from "./CategoryEditDrawer";
+import DeleteDrower from "./DeleteDrower";
+
+export default function CategoryRow({ category, level }: { category:Category,level:number }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [editDrawerOpen, setEditDrawerOpen] = useState(false);
+  const [openDeleteDrawer, setOpenDeleteDrawer] = useState(false);
+  const hasChildren = category.children?.length > 0;
+
+  const handleEdit = () => {
+    setEditDrawerOpen(true);
+  };
+ const handleDelete = () => {
+   setOpenDeleteDrawer(true);
+ };
+
+  return (
+    <>
+      <tr className="hover:bg-gray-50 transition">
+        <td className="px-4 py-3 w-10">
+          <input type="checkbox" />
+        </td>
+
+        <td className="px-4 py-3">
+          <div
+            className="flex items-center relative"
+            style={{ paddingLeft: `${level * 28}px` }}
+          >
+            {level === 1 && (
+              <span className="absolute left-0 top-0 h-full ">#</span>
+            )}
+            {level === 2 && (
+              <span className="absolute left-5 top-0 h-full ">#</span>
+            )}
+
+            {hasChildren ? (
+              <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="w-5 h-5 flex items-center justify-center rounded-full border border-gray-300 bg-white mr-2 hover:bg-gray-100 transition"
+              >
+                {isOpen ? (
+                  <ChevronDown size={14} />
+                ) : (
+                  <ChevronRight size={14} />
+                )}
+              </button>
+            ) : (
+              <span className="" />
+            )}
+
+            <span className="text-sm font-medium text-gray-800">
+              {category.name}
+            </span>
+          </div>
+        </td>
+
+        <td className="px-4 py-3 text-sm text-gray-500">
+          {category.metaDescription}
+        </td>
+
+        <td className="px-4 py-3">
+          <span
+            className={`px-2 py-1 text-xs rounded-full ${
+              category.isActive
+                ? "bg-green-100 text-green-700"
+                : "bg-gray-100 text-gray-500"
+            }`}
+          >
+            {category.isActive ? "Active" : "Inactive"}
+          </span>
+        </td>
+
+        <td className="px-4 py-3">
+          <div className="flex gap-2">
+            <button
+              onClick={() => handleEdit()}
+              className="p-2 rounded-md bg-gray-100 hover:bg-gray-200"
+            >
+              <Pencil size={14} />
+            </button>
+            {editDrawerOpen && (
+              <CategoryEditDrawer
+                category={category}
+                open={editDrawerOpen}
+                onClose={() => setEditDrawerOpen(false)}
+              />
+            )}
+            <button
+              onClick={() => handleDelete()}
+              className="p-2 rounded-md bg-gray-100 hover:bg-gray-200"
+            >
+              <Trash2 size={14} />
+            </button>
+            {openDeleteDrawer && (
+              <DeleteDrower
+                category={category}
+                open={openDeleteDrawer}
+                onClose={() => setOpenDeleteDrawer(false)}
+              />
+            )}
+          </div>
+        </td>
+      </tr>
+
+      {hasChildren &&
+        isOpen &&
+        category.children.map((child: Category) => (
+          <CategoryRow key={child._id} category={child} level={level + 1} />
+        ))}
+    </>
+  );
+}
