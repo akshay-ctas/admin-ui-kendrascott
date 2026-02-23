@@ -1,4 +1,4 @@
-import { CategoryFormData } from "@/components/CategoryEditDrawer";
+import { CategoryFormData } from "@/components/category1/CategoryEditDrawer";
 import { api } from "@/lib/axios";
 
 export const getCategoryTree = async () => {
@@ -7,7 +7,6 @@ export const getCategoryTree = async () => {
 };
 
 export const updateCategory = async (id: string, data: CategoryFormData) => {
-
   const res = await api.put(`/categories/${id}`, data, {
     headers: {
       Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
@@ -18,11 +17,20 @@ export const updateCategory = async (id: string, data: CategoryFormData) => {
 
 export const deleteCategory = async (id: string) => {
   console.log(id, sessionStorage.getItem("accessToken"));
-  
 
   const res = await api.delete(`/categories/${id}`, {
     headers: {
       Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+    },
+  });
+  return res.data;
+};
+
+export const createCategory = async (data: FormData) => {
+  const res = await api.post(`/categories`, data, {
+    headers: {
+      Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+      "Content-Type": "multipart/form-data",
     },
   });
   return res.data;

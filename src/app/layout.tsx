@@ -5,6 +5,8 @@ import Sidenav from "@/components/Sidenav";
 import Topnav from "@/components/Topnav";
 import Providers from "@/lib/providers";
 import { AuthProvider } from "@/context/AuthContext";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,7 +40,20 @@ export default function RootLayout({
           <section className="w-full">
             <Topnav />
             <main>
-              <Providers>{children}</Providers>
+              <Providers>
+                {children}
+
+                <ToastContainer
+                  position="top-right"
+                  autoClose={3000}
+                  hideProgressBar={false}
+                  newestOnTop={true}
+                  closeOnClick
+                  pauseOnHover
+                  draggable
+                  theme="light"
+                />
+              </Providers>
             </main>
           </section>
         </AuthProvider>

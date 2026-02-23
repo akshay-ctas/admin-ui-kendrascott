@@ -1,9 +1,18 @@
-import React from 'react'
+import { AddProductButton } from "@/components/Product/AddProductButton";
+import ProductTable from "@/components/Product/ProductTable";
 
-const productPage = () => {
+export default function productPage() {
   return (
-    <div>product page</div>
-  )
-}
+    <div className="px-4 py-5">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-lg font-semibold text-gray-800">Products</h1>
+          <p className="text-xs text-gray-400">Manage your products</p>
+        </div>
+        <AddProductButton />
+      </div>
 
-export default productPage;
+      <ProductTable />
+    </div>
+  );
+}

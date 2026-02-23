@@ -6,41 +6,48 @@ import { Category } from "@/types";
 import CategoryEditDrawer from "./CategoryEditDrawer";
 import DeleteDrower from "./DeleteDrower";
 
-export default function CategoryRow({ category, level }: { category:Category,level:number }) {
+const paddingMap: Record<number, string> = {
+  0: "pl-0",
+  1: "pl-7",
+  2: "pl-14",
+};
+
+export default function CategoryRow({
+  category,
+  level,
+  hidden = false,
+}: {
+  category: Category;
+  level: number;
+  hidden?: boolean;
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [editDrawerOpen, setEditDrawerOpen] = useState(false);
   const [openDeleteDrawer, setOpenDeleteDrawer] = useState(false);
-  const hasChildren = category.children?.length > 0;
 
-  const handleEdit = () => {
-    setEditDrawerOpen(true);
-  };
- const handleDelete = () => {
-   setOpenDeleteDrawer(true);
- };
+  const hasChildren = category.children?.length > 0;
 
   return (
     <>
-      <tr className="hover:bg-gray-50 transition">
+      <tr className={`hover:bg-gray-50 transition ${hidden ? "hidden" : ""}`}>
         <td className="px-4 py-3 w-10">
           <input type="checkbox" />
         </td>
 
         <td className="px-4 py-3">
           <div
-            className="flex items-center relative"
-            style={{ paddingLeft: `${level * 28}px` }}
+            className={`flex items-center relative ${paddingMap[level] ?? "pl-0"}`}
           >
             {level === 1 && (
-              <span className="absolute left-0 top-0 h-full ">#</span>
+              <span className="absolute left-0 top-0 h-full">#</span>
             )}
             {level === 2 && (
-              <span className="absolute left-5 top-0 h-full ">#</span>
+              <span className="absolute left-5 top-0 h-full">#</span>
             )}
 
             {hasChildren ? (
               <button
-                onClick={() => setIsOpen(!isOpen)}
+                onClick={() => setIsOpen((prev) => !prev)}
                 className="w-5 h-5 flex items-center justify-center rounded-full border border-gray-300 bg-white mr-2 hover:bg-gray-100 transition"
               >
                 {isOpen ? (
@@ -50,7 +57,7 @@ export default function CategoryRow({ category, level }: { category:Category,lev
                 )}
               </button>
             ) : (
-              <span className="" />
+              <span className="w-5 mr-2 inline-block" />
             )}
 
             <span className="text-sm font-medium text-gray-800">
@@ -78,39 +85,40 @@ export default function CategoryRow({ category, level }: { category:Category,lev
         <td className="px-4 py-3">
           <div className="flex gap-2">
             <button
-              onClick={() => handleEdit()}
+              onClick={() => setEditDrawerOpen(true)}
               className="p-2 rounded-md bg-gray-100 hover:bg-gray-200"
             >
               <Pencil size={14} />
             </button>
-            {editDrawerOpen && (
-              <CategoryEditDrawer
-                category={category}
-                open={editDrawerOpen}
-                onClose={() => setEditDrawerOpen(false)}
-              />
-            )}
             <button
-              onClick={() => handleDelete()}
+              onClick={() => setOpenDeleteDrawer(true)}
               className="p-2 rounded-md bg-gray-100 hover:bg-gray-200"
             >
               <Trash2 size={14} />
             </button>
-            {openDeleteDrawer && (
-              <DeleteDrower
-                category={category}
-                open={openDeleteDrawer}
-                onClose={() => setOpenDeleteDrawer(false)}
-              />
-            )}
           </div>
         </td>
       </tr>
 
+      <CategoryEditDrawer
+        category={category}
+        open={editDrawerOpen}
+        onClose={() => setEditDrawerOpen(false)}
+      />
+      <DeleteDrower
+        category={category}
+        open={openDeleteDrawer}
+        onClose={() => setOpenDeleteDrawer(false)}
+      />
+
       {hasChildren &&
-        isOpen &&
         category.children.map((child: Category) => (
-          <CategoryRow key={child._id} category={child} level={level + 1} />
+          <CategoryRow
+            key={child._id}
+            category={child}
+            level={level + 1}
+            hidden={!isOpen}
+          />
         ))}
     </>
   );

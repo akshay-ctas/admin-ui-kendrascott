@@ -9,7 +9,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { Category } from "@/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteCategory } from "@/services/category.service"; 

@@ -1,15 +1,17 @@
 "use client"
 import { Category } from "@/types";
 import CategoryRow from "./CategoryRow";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getCategoryTree } from "@/services/category.service";
 
 export default function CategoryTable() {
-   const { data } = useQuery({
-     queryKey: ["category"],
-     queryFn: () => getCategoryTree(),
-     placeholderData: keepPreviousData,
-   });
+  const { data } = useQuery({
+    queryKey: ["category"],
+    queryFn: getCategoryTree,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    staleTime: 1000 * 60 * 5,
+  });
    
   return (
     <table className="w-full mt-10 border border-gray-200 rounded-lg overflow-hidden shadow-sm">
@@ -17,7 +19,9 @@ export default function CategoryTable() {
         <tr>
           <th></th>
           <th className="px-6 py-3 text-left text-sm font-semibold">Name</th>
-          <th className="px-6 py-3 text-left text-sm font-semibold">URL</th>
+          <th className="px-6 py-3 text-left text-sm font-semibold">
+            Description
+          </th>
           <th className="px-6 py-3 text-left text-sm font-semibold">Status</th>
 
           <th>Actions</th>

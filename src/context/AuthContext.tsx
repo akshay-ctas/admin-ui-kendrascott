@@ -16,6 +16,7 @@ export type User = {
   email: string;
   firstName: string;
   lastName: string;
+  avatar: string;
   isEmailVerified: boolean;
   role: "customer" | "admin" | string;
   wishlistCount: [];
@@ -55,6 +56,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const initAuth = async () => {
       if (typeof window === "undefined") return;
 
+       const rawToken = sessionStorage.getItem("accessToken");
+       if (rawToken === "undefined" || rawToken === "null") {
+         sessionStore.clear();
+       }
+
+
       const storedUser = sessionStore.get<User | null>("user");
       const storedToken = sessionStore.get<string | null>("accessToken");
 
@@ -67,10 +74,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       try {
         const res = await api.get("/auth/refresh");
-        setUser(res.data.user);
-        setAccessToken(res.data.accessToken);
-        sessionStore.set("user", res.data.user);
-        sessionStore.set("accessToken", res.data.accessToken);
+        const accessToken = res.data.accessToken;
+        if (!accessToken) {
+          throw new Error("No access token received");
+        }
+        const userRes = await api.get("/auth/self", {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        const user = userRes.data.user;
+        setUser(user);
+        setAccessToken(accessToken);
+        sessionStore.set("user", user);
+        sessionStore.set("accessToken", accessToken);
       } catch {
         logout();
       } finally {

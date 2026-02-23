@@ -1,4 +1,6 @@
-import CategoryTable from "@/components/CategoryTable";
+import AddCategoryButton from "@/components/category/AddCategoryButton";
+import AddCategory from "@/components/category1/AddCategory";
+import CategoryTable from "@/components/category1/CategoryTable";
 
 export default async function CategoryPage() {
   return (
@@ -10,6 +12,7 @@ export default async function CategoryPage() {
             Manage your product categories
           </p>
         </div>
+        <AddCategory />
       </div>
 
       <CategoryTable />

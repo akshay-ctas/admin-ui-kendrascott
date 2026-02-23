@@ -1,10 +1,17 @@
 class SessionStorageService {
   set(key: string, value: unknown): boolean {
+    if (value === undefined) {
+      console.warn(
+        `SessionStorage: skipping set for key "${key}" — value is undefined`,
+      );
+      return false;
+    }
+
     try {
       sessionStorage.setItem(key, JSON.stringify(value));
       return true;
     } catch (error) {
-      console.error(error);
+      console.error(`SessionStorage set error for key "${key}":`, error);
       return false;
     }
   }
@@ -12,11 +19,13 @@ class SessionStorageService {
   get<T = unknown>(key: string): T | null {
     try {
       const data = sessionStorage.getItem(key);
-      const result = data ? JSON.parse(data) : null;
 
-      return result;
+      if (!data || data === "undefined" || data === "null") return null;
+
+      return JSON.parse(data) as T;
     } catch (error) {
-      console.error(error);
+      console.error(`SessionStorage get error for key "${key}":`, error);
+      sessionStorage.removeItem(key);
       return null;
     }
   }

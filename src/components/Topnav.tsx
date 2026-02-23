@@ -52,8 +52,8 @@ const Topnav = () => {
                 <Image
                   src={user.avatar}
                   alt={user.firstName}
-                  height={20}
-                  width={20}
+                  height={36}
+                  width={36}
                 />
               ) : (
                 <User size={20} className="text-orange-500" />
