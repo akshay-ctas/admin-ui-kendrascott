@@ -26,6 +26,7 @@ export default function CategoryRow({
   const [openDeleteDrawer, setOpenDeleteDrawer] = useState(false);
 
   const hasChildren = category.children?.length > 0;
+  const shouldRenderChildren = hasChildren && isOpen && !hidden;
 
   return (
     <>
@@ -111,7 +112,7 @@ export default function CategoryRow({
         onClose={() => setOpenDeleteDrawer(false)}
       />
 
-      {hasChildren &&
+      {shouldRenderChildren &&
         category.children.map((child: Category) => (
           <CategoryRow
             key={child._id}

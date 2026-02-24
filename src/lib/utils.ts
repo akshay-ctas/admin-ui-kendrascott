@@ -12,3 +12,13 @@ export const isTokenExpired = (token: string) => {
     return true;
   }
 };
+
+export function generateSKU(productName: string, variant: any) {
+  const namePart = productName.trim().substring(0, 3).toUpperCase();
+
+  const colorPart = variant.color?.substring(0, 2).toUpperCase() || "XX";
+  const sizePart = variant.size?.toString().padStart(2, "0") || "00";
+  const randomPart = Math.floor(100 + Math.random() * 900);
+
+  return `${namePart}-${colorPart}${sizePart}-${randomPart}`;
+}

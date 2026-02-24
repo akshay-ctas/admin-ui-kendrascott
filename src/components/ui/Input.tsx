@@ -15,7 +15,7 @@ export function Input({ label, error, disabled, ...props }: InputProps) {
         {...props}
         disabled={disabled}
         type={props.type || "text"}
-        className={`w-full border rounded-lg px-3 py-2 text-sm 
+        className={`w-full bg-white border rounded-lg px-3 py-2 text-sm 
           ${disabled ? "bg-gray-100 cursor-not-allowed" : ""} 
           ${error ? "border-red-500" : "border-gray-300"}
         `}

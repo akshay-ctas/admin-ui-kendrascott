@@ -18,7 +18,7 @@ type Category = {
   url: string;
 };
 
-function flattenCategories(
+export function flattenCategories(
   categories: Category[],
   depth = 0,
 ): { _id: string; name: string; level: number; url: string }[] {

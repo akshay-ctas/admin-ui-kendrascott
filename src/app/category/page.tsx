@@ -1,4 +1,3 @@
-import AddCategoryButton from "@/components/category/AddCategoryButton";
 import AddCategory from "@/components/category1/AddCategory";
 import CategoryTable from "@/components/category1/CategoryTable";
 

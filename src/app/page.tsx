@@ -11,7 +11,7 @@ export default function Home() {
     if (loading) return;
     if (user) router.replace("/dashboard");
     else router.replace("/login");
-  }, [user, loading]);
+  }, [user, loading, router]);
 
   return null;
 }
