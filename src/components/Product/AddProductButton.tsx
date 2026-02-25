@@ -2,7 +2,7 @@
 
 import { Plus } from "lucide-react";
 import { useState } from "react";
-import { CreateProductForm } from "./createProductForm";
+import { CreateProductForm } from "./CreateProductForm";
 
 export function AddProductButton(){
     const [open, setOpen] = useState(false)

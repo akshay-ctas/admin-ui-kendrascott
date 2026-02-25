@@ -9,3 +9,15 @@ export const createProduct = async (data: FormData) => {
   });
   return res.data;
 };
+
+export const getProduct = async (params: {
+  page: number;
+  limit: number;
+  search?: string;
+  status?: string;
+  sortBy?: string;
+  order?: string;
+}) => {
+  const res = await api.get(`/product`, { params });
+  return res.data;
+};
