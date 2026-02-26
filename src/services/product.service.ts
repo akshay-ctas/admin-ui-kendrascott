@@ -10,7 +10,7 @@ export const createProduct = async (data: FormData) => {
   return res.data;
 };
 
-export const getProduct = async (params: {
+export const getProduct = async (params?: {
   page: number;
   limit: number;
   search?: string;
@@ -19,5 +19,23 @@ export const getProduct = async (params: {
   order?: string;
 }) => {
   const res = await api.get(`/product`, { params });
+  return res.data;
+};
+
+export type ProductDetails = {
+  status: string;
+  title: string;
+  metaTitle: string;
+  metaDescription: string;
+  description: string;
+  tags: [];
+};
+
+export const editProductDetails = async (id: string, data: ProductDetails) => {
+  const res = await api.patch(`/product/${id}`, data, {
+    headers: {
+      Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+    },
+  });
   return res.data;
 };

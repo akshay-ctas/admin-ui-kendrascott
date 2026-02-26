@@ -4,7 +4,13 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
   images: {
-    domains: ["kendrascott-clone.s3.ap-south-1.amazonaws.com"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "kendrascott-clone.s3.ap-south-1.amazonaws.com",
+        pathname: "/**", // Allows all images in the bucket
+      },
+    ],
   },
 };
 

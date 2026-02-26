@@ -22,3 +22,28 @@ export function generateSKU(productName: string, variant: any) {
 
   return `${namePart}-${colorPart}${sizePart}-${randomPart}`;
 }
+
+export const formatDate = (
+  isoString: string | Date,
+  locale: string = "en-IN",
+): string => {
+  if (!isoString) return "";
+
+  const date = typeof isoString === "string" ? new Date(isoString) : isoString;
+
+  if (isNaN(date.getTime())) {
+    return "Invalid Date";
+  }
+
+  const options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+    timeZone: "Asia/Kolkata",
+  };
+
+  return new Intl.DateTimeFormat(locale, options).format(date);
+};
