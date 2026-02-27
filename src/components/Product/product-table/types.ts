@@ -16,6 +16,7 @@ export interface Variant {
   size: string;
   stock: number;
   price: number;
+  isAvailable: boolean;
 }
 
 export interface Category {

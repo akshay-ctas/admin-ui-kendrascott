@@ -11,8 +11,6 @@ export default function productPage() {
   const products = data?.data || [];
   const meta = data?.meta;
 
-  console.log("Products Array:", products);
-  console.log("Meta:", meta);
   return (
     <div className="">
       <div className="px-4 py-5 flex items-center justify-between">

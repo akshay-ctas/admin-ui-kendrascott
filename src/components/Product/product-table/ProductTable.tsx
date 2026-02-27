@@ -1,8 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
-import { fmt, fmtDate, initialData } from "./dummay";
+import { fmt, fmtDate } from "./dummay";
 import ExpandedRow from "./ExpandedRow";
 import type { Product, Variant } from "./types";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { editProductVariants } from "@/services/product.service";
+import { toast } from "react-toastify";
 
 export default function ProductTable({ products }: { products: Product[] }) {
   const [rows, setRows] = useState<Product[]>(products);
@@ -14,25 +17,36 @@ export default function ProductTable({ products }: { products: Product[] }) {
   const toggle = (id: string) =>
     setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
 
-  const handleProductSave = (updated: Product) => {
-    setRows((prev) =>
-      prev.map((p) => (p._id === updated._id ? { ...p, ...updated } : p)),
-    );
-  };
+  const queryClient = useQueryClient();
+  const { mutate, isPending } = useMutation({
+    mutationFn: ({
+      productId,
+      variantId,
+      data,
+    }: {
+      productId: string;
+      variantId: string;
+      data: Variant;
+    }) => editProductVariants(productId, variantId, data),
 
+    onSuccess: (_res, { productId, data }) => {
+      toast.success(`Variant ${data.sku} updated successfully`);
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({
+        queryKey: ["product", productId],
+      });
+    },
+
+    onError: (error: any) => {
+      console.error("Variant update failed:", error);
+    },
+  });
   const handleVariantSave = (productId: string, updatedVariant: Variant) => {
-    setRows((prev) =>
-      prev.map((p) =>
-        p._id !== productId
-          ? p
-          : {
-              ...p,
-              variants: p.variants.map((v) =>
-                v._id === updatedVariant._id ? updatedVariant : v,
-              ),
-            },
-      ),
-    );
+    mutate({
+      productId,
+      variantId: updatedVariant._id,
+      data: updatedVariant,
+    });
   };
 
   return (
@@ -45,7 +59,6 @@ export default function ProductTable({ products }: { products: Product[] }) {
           <div>Status</div>
           <div>Variants</div>
           <div>Updated</div>
-          <div>Action</div>
         </div>
 
         {rows.map((product) => {
@@ -102,7 +115,6 @@ export default function ProductTable({ products }: { products: Product[] }) {
               {isOpen && (
                 <ExpandedRow
                   product={product}
-                  onProductSave={handleProductSave}
                   onVariantSave={handleVariantSave}
                 />
               )}

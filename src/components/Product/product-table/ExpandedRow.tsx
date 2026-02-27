@@ -2,7 +2,12 @@
 import { useState } from "react";
 import { EInput, FieldLabel, fmt } from "./dummay";
 import ProductDetail from "./ProductDetail";
-import type { Product, ProductImage, Variant } from "./types";
+import type { Product, Variant } from "./types";
+import VariantImages from "./VariantImages";
+import { Trash2 } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { deleteVariant } from "@/services/product.service";
+import { toast } from "react-toastify";
 
 const FIELDS: {
   label: string;
@@ -18,58 +23,14 @@ const FIELDS: {
   { label: "Price", key: "price", type: "number", isPrice: true },
 ];
 
-const VariantImages = ({
-  images,
-  variantId,
-}: {
-  images: ProductImage[];
-  variantId: string;
-}) => {
-  const imgs = images?.filter((i) => i.variantId === variantId) ?? [];
-
-  if (!imgs.length)
-    return (
-      <span className="text-slate-300 text-xs italic">No images linked</span>
-    );
-
-  return (
-    <div className="flex gap-2 flex-wrap mt-2">
-      {imgs?.map((img) => (
-        <div key={img._id} className="relative">
-          <img
-            src={img.url}
-            alt={img.altText}
-            className={`w-14 h-14 object-cover rounded-md border-2 ${
-              img.isPrimary ? "border-indigo-500" : "border-slate-200"
-            }`}
-            onError={(e) => {
-              (e.target as HTMLImageElement).style.display = "none";
-            }}
-          />
-          {img.isPrimary && (
-            <span className="absolute bottom-1 right-1 bg-indigo-500 text-white text-[8px] px-1 rounded font-bold">
-              P
-            </span>
-          )}
-          <div className="text-[9px] text-slate-400 text-center truncate w-14">
-            {img.altText || "—"}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-};
-
 interface ExpandedRowProps {
   product: Product;
   onVariantSave?: (productId: string, variant: Variant) => void;
-  onProductSave?: (updated: Product) => void;
 }
 
 export default function ExpandedRow({
   product,
   onVariantSave,
-  onProductSave,
 }: ExpandedRowProps) {
   const [editingId, setEditingId] = useState<string | null>(null);
 
@@ -94,6 +55,7 @@ export default function ExpandedRow({
     if (formData) {
       onVariantSave?.(product._id, formData);
     }
+
     setEditingId(null);
     setFormData(null);
   };
@@ -102,10 +64,28 @@ export default function ExpandedRow({
     setEditingId(null);
     setFormData(null);
   };
+  const queryClient = useQueryClient();
+  const deleteVariantMutation = useMutation({
+    mutationFn: (variantId: string) => deleteVariant(product._id, variantId),
+    onSuccess: (res, variantId) => {
+      toast.success(`Variant deleted successfully`);
+
+      queryClient.invalidateQueries({
+        queryKey: ["product", product._id],
+      });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Failed to delete variant");
+    },
+  });
+  const handleDeleteVariant = (variantId: string) => {
+    deleteVariantMutation.mutate(variantId);
+  };
 
   return (
     <div className="border-t border-slate-200 bg-slate-50 p-5 animate-[fade_.2s_ease]">
-      <ProductDetail product={product} onSave={onProductSave} />
+      <ProductDetail product={product} />
 
       <div className="uppercase text-[11px] font-bold tracking-wide text-slate-600 mb-3">
         Variants ({product.variants.length})
@@ -128,42 +108,51 @@ export default function ExpandedRow({
                 SKU: {v.sku}
               </span>
 
-              {isEditing ? (
-                <div className="flex gap-1">
+              <div className="flex items-center gap-2">
+                {isEditing ? (
+                  <div className="flex gap-1">
+                    <button
+                      onClick={handleSave}
+                      className="text-xs hover:border hover:border-purple-800 bg-purple-200 text-purple-400 hover:text-purple-600 hover:font-semibold px-2 py-1 rounded transition-colors"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={handleCancel}
+                      className="text-xs text-purple-400 hover:text-purple-600 hover:font-semibold px-2 py-1 rounded transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
                   <button
-                    onClick={handleSave}
-                    className="text-xs hover:border hover:border-purple-800 bg-purple-200 text-purple-400 hover:text-purple-600 hover:font-semibold px-2 py-1 rounded transition-colors"
+                    className="text-xs flex items-center gap-1 border border-purple-600 px-2 py-1 rounded-sm cursor-pointer font-semibold text-indigo-700"
+                    onClick={() => handleEdit(v)}
                   >
-                    Save
+                    <svg
+                      width="13"
+                      height="13"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                    </svg>
+                    Edit Variant
                   </button>
-                  <button
-                    onClick={handleCancel}
-                    className="text-xs text-purple-400 hover:text-purple-600 hover:font-semibold px-2 py-1 rounded transition-colors"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              ) : (
+                )}
                 <button
-                  className="text-xs flex items-center gap-1 border border-purple-600 px-2 py-1 rounded-sm cursor-pointer font-semibold text-indigo-700"
-                  onClick={() => handleEdit(v)}
+                  onClick={() => handleDeleteVariant(v._id)}
+                  className="text-xs flex items-center gap-1 border border-red-600 px-2 py-1 rounded-sm cursor-pointer font-semibold text-red-700"
                 >
-                  <svg
-                    width="13"
-                    height="13"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                  </svg>
-                  Edit Variant
+                  <Trash2 size={13} />
+                  Delete Variant
                 </button>
-              )}
+              </div>
             </div>
 
             <div className="grid grid-cols-6 gap-3 text-sm mb-3">
@@ -190,7 +179,11 @@ export default function ExpandedRow({
             </div>
 
             <FieldLabel>Linked Images</FieldLabel>
-            <VariantImages images={product.images} variantId={v._id} />
+            <VariantImages
+              images={product.images}
+              productId={product._id}
+              variantId={v._id}
+            />
           </div>
         );
       })}

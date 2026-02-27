@@ -16,8 +16,6 @@ export const updateCategory = async (id: string, data: CategoryFormData) => {
 };
 
 export const deleteCategory = async (id: string) => {
-  console.log(id, sessionStorage.getItem("accessToken"));
-
   const res = await api.delete(`/categories/${id}`, {
     headers: {
       Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,

@@ -1,3 +1,4 @@
+import { Variant } from "@/components/Product/product-table/types";
 import { api } from "@/lib/axios";
 
 export const createProduct = async (data: FormData) => {
@@ -31,8 +32,86 @@ export type ProductDetails = {
   tags: [];
 };
 
+export const editProductVariants = async (
+  productId: string,
+  variantId: string,
+  data: Variant,
+) => {
+  const res = await api.patch(
+    `/product/${productId}/variants/${variantId}`,
+    data,
+    {
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+      },
+    },
+  );
+  console.log(res);
+
+  return res.data;
+};
+
 export const editProductDetails = async (id: string, data: ProductDetails) => {
-  const res = await api.patch(`/product/${id}`, data, {
+  const res = await api.patch(`/product/${id}/`, data, {
+    headers: {
+      Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+    },
+  });
+  return res.data;
+};
+
+export const addImages = async (
+  productId: string,
+  variantId: string,
+  data: FormData,
+) => {
+  const res = await api.post(
+    `/product/${productId}/variants/${variantId}/images`,
+    data,
+    {
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        "Content-Type": "multipart/form-data",
+      },
+    },
+  );
+  return res.data;
+};
+
+export const setPrimaryImages = async (
+  productId: string,
+  variantId: string,
+  imageId: string,
+) => {
+  const res = await api.patch(
+    `/product/${productId}/variants/${variantId}/images/${imageId}/set-primary`,
+    {
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+      },
+    },
+  );
+  return res.data;
+};
+
+export const deleteImage = async (
+  productId: string,
+  variantId: string,
+  imageId: string,
+) => {
+  const res = await api.delete(
+    `/product/${productId}/variants/${variantId}/images/${imageId}/delete`,
+    {
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+      },
+    },
+  );
+  return res.data;
+};
+
+export const deleteVariant = async (productId: string, variantId: string) => {
+  const res = await api.delete(`/product/${productId}/variants/${variantId}`, {
     headers: {
       Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
     },
