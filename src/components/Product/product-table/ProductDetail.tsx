@@ -5,6 +5,9 @@ import { Btn, EditIcon, FieldLabel } from "./dummay";
 import { ProductEditPanel } from "./ProductEditPanel";
 import type { Product } from "./types";
 import { Trash2 } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { deleteProduct } from "@/services/product.service";
+import { toast } from "react-toastify";
 
 interface ProductDetailProps {
   product: Product;
@@ -13,7 +16,23 @@ interface ProductDetailProps {
 const ProductDetail = React.memo(({ product }: ProductDetailProps) => {
   const [editingProduct, setEditingProduct] = useState(false);
 
-  const deleteProduct = () => {};
+  const queryClient = useQueryClient();
+  const { mutate, isPending } = useMutation<unknown, Error, string>({
+    mutationFn: deleteProduct,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["product"],
+      });
+      toast.success("Product Deleted");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const handleDeleteProduct = (productId: string) => {
+    mutate(productId);
+  };
 
   if (!product) return null;
 
@@ -44,11 +63,11 @@ const ProductDetail = React.memo(({ product }: ProductDetailProps) => {
             </button>
           )}
           <button
-            onClick={() => deleteProduct(product._id)}
+            onClick={() => handleDeleteProduct(product._id)}
             className="text-xs flex items-center gap-1 border border-red-600 px-2 py-1 rounded-sm cursor-pointer font-semibold text-red-700"
           >
             <Trash2 size={13} />
-            Delete Product
+            {isPending ? "Deleting..." : "Delete Product"}
           </button>
         </div>
       </div>

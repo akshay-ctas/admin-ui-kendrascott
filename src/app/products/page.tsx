@@ -1,15 +1,17 @@
 "use client";
 import { AddProductButton } from "@/components/Product/AddProductButton";
 import ProductTable from "@/components/Product/product-table/ProductTable";
-import { getProduct } from "@/services/product.service";
 import { useProducts } from "@/services/useProduct";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
 export default function productPage() {
-  const { data } = useProducts();
+  const [page, setPage] = useState(1);
+  const limit = 10;
 
-  const products = data?.data || [];
-  const meta = data?.meta;
+  const { data, isLoading } = useProducts({
+    page,
+    limit: 10,
+  });
 
   return (
     <div className="">
@@ -21,7 +23,12 @@ export default function productPage() {
         <AddProductButton />
       </div>
 
-      <ProductTable products={products} />
+      <ProductTable
+        products={data?.data || []}
+        meta={data?.meta}
+        page={page}
+        setPage={setPage}
+      />
     </div>
   );
 }

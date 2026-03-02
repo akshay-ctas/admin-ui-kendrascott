@@ -38,7 +38,7 @@ const VariantImages = ({
     mutationFn: (formData: FormData) =>
       addImages(productId, variantId, formData),
     onSuccess: (res) => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["product"] });
       toast.success(`${res.count} images uploaded successfully`);
     },
   });
@@ -51,7 +51,7 @@ const VariantImages = ({
     mutationFn: (imageId: string) =>
       setPrimaryImages(productId, variantId, imageId),
     onSuccess: (res) => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["product"] });
       toast.success(`${res.count} images uploaded successfully`);
     },
   });
@@ -63,7 +63,7 @@ const VariantImages = ({
   >({
     mutationFn: (imageId: string) => deleteImage(productId, variantId, imageId),
     onSuccess: (res) => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["product"] });
       toast.success(res.message);
     },
   });

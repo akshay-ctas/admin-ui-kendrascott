@@ -1,7 +1,5 @@
-"use client";
-
-import { getProduct } from "@/services/product.service";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { getProduct } from "./product.service";
 
 export const useProducts = (filters?: {
   page: number;
@@ -12,7 +10,15 @@ export const useProducts = (filters?: {
   order?: string;
 }) => {
   return useQuery({
-    queryKey: ["products", filters],
+    queryKey: [
+      "product",
+      filters?.page,
+      filters?.limit,
+      filters?.search,
+      filters?.status,
+      filters?.sortBy,
+      filters?.order,
+    ],
     queryFn: () => getProduct(filters),
     placeholderData: keepPreviousData,
   });

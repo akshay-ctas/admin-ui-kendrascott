@@ -73,7 +73,7 @@ export default function ExpandedRow({
       queryClient.invalidateQueries({
         queryKey: ["product", product._id],
       });
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["product"] });
     },
     onError: (error: any) => {
       toast.error(error.message || "Failed to delete variant");
@@ -84,7 +84,7 @@ export default function ExpandedRow({
   };
 
   return (
-    <div className="border-t border-slate-200 bg-slate-50 p-5 animate-[fade_.2s_ease]">
+    <div className="border-b border-slate-200  bg-slate-50 p-5 animate-[fade_.2s_ease]">
       <ProductDetail product={product} />
 
       <div className="uppercase text-[11px] font-bold tracking-wide text-slate-600 mb-3">

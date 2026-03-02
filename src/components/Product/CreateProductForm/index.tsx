@@ -10,13 +10,11 @@ import { flattenCategories } from "@/components/category/utils/flattenCategories
 import { useProductForm } from "./hooks/useProductForm";
 import { useVariants } from "./hooks/useVariants";
 import { useProductImages } from "./hooks/useProductImages";
-import {  AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { ProductDetailsSection } from "./sections/ProductDetailsSection";
 import { ProductVariantsSection } from "./sections/ProductVariantsSection";
 import { ProductImagesSection } from "./sections/ProductImagesSection";
 import { SeoSection } from "./sections/SeoSection";
-
-
 
 export function CreateProductForm({ onClose }: { onClose: () => void }) {
   const [show, setShow] = useState(false);
@@ -67,11 +65,11 @@ export function CreateProductForm({ onClose }: { onClose: () => void }) {
   const createProductMutation = useMutation({
     mutationFn: createProduct,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["product"] });
       toast.success("Product created successfully!");
       onClose();
     },
-    onError: (error: AxiosError<{message:string}>) => {
+    onError: (error: AxiosError<{ message: string }>) => {
       toast.error(error?.response?.data?.message || "Failed to create product");
       console.error("Product creation failed:", error);
     },

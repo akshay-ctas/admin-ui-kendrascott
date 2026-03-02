@@ -118,3 +118,12 @@ export const deleteVariant = async (productId: string, variantId: string) => {
   });
   return res.data;
 };
+
+export const deleteProduct = async (productId: string) => {
+  const res = await api.delete(`/product/${productId}`, {
+    headers: {
+      Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+    },
+  });
+  return res.data;
+};

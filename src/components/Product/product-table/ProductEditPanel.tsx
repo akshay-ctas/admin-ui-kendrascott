@@ -32,7 +32,7 @@ export const ProductEditPanel = ({
     mutationFn: (data: any) => editProductDetails(product._id, data),
 
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["product"] });
       toast.success("product details update.");
       onClose();
     },
