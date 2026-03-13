@@ -19,7 +19,7 @@ export const getProduct = async (params?: {
   sortBy?: string;
   order?: string;
 }) => {
-  const res = await api.get(`/product`, { params });
+  const res = await api.get(`/product/all`, { params });
   return res.data;
 };
 

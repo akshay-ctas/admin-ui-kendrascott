@@ -23,7 +23,7 @@ const Topnav = () => {
 
   return (
     <header className="flex items-center justify-between px-6 py-4.5 shrink-0">
-      <h1 className="text-2xl font-extrabold text-gray-900 tracking-[-0.4px] m-0">
+      <h1 className="text-xl uppercase  font-semibold text-gray-700 tracking-widest m-0">
         Admin Panal
       </h1>
 
@@ -54,6 +54,7 @@ const Topnav = () => {
                   alt={user.firstName}
                   height={36}
                   width={36}
+                  className="object-cover w-full h-full"
                 />
               ) : (
                 <User size={20} className="text-orange-500" />
